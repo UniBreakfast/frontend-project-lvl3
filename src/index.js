@@ -4,19 +4,18 @@ import onChange from 'on-change';
 import axios from 'axios';
 import { renderForm, renderFeedback } from './view.js';
 
-const validateRssLink = (watchedState) => {
-  const schema = yup
+const schema = yup
     .string()
     .url('This needs to be a valid URL.')
     .required('You need to provide an rss link.')
-    .test(
+
+const validateRssLink = (watchedState) => {
+  try {
+    schema.test(
       'check if already added',
       'This feed has already been loaded.',
       (link) => !watchedState.addedLinks.includes(link),
-    );
-
-  try {
-    schema.validateSync(watchedState.form.rssLink);
+    ).validateSync(watchedState.form.rssLink);
     return [];
   } catch (validationError) {
     return validationError.errors;
